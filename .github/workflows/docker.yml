@@ -1,0 +1,37 @@
+name: Docker CI
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: build docker
+        run: docker build -t dtp-app .
+
+  push:
+    if: github.ref == 'refs/heads/main'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: login dockerhub
+        run: echo "${{ secrets.DOCKER_PASS }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
+
+      - name: build
+        run: docker build -t ${{ secrets.DOCKER_USER }}/dtp-app .
+
+      - name: push
+        run: docker push ${{ secrets.DOCKER_USER }}/dtp-app
