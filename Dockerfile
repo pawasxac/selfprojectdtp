@@ -17,4 +17,3 @@ COPY --from=builder /app .
 
 CMD ["node", "app.js"]
 
-test main
